@@ -4,16 +4,13 @@ from torch.utils.data import DataLoader
 import time
 import argparse
 from progress.bar import IncrementalBar
-import wandb
 
-from dataset import Cityscapes, Facades, Maps, TryData
+from dataset import TryData
 from dataset import transforms as T
 from gan.generator import UnetGenerator
 from gan.discriminator import ConditionalDiscriminator
 from gan.criterion import GeneratorLoss, DiscriminatorLoss
 from gan.utils import Logger, initialize_weights
-
-wandb.init(project="pix2pix", name="training_run")
 
 parser = argparse.ArgumentParser(prog='top', description='Train Pix2Pix')
 parser.add_argument("--epochs", type=int, default=200, help="Number of epochs")
@@ -40,14 +37,8 @@ g_criterion = GeneratorLoss(alpha=100)
 d_criterion = DiscriminatorLoss()
 
 print(f'Downloading "{args.dataset.upper()}" dataset!')
-if args.dataset == 'cityscapes':
-    dataset = Cityscapes(root='.', transform=transforms, download=True, mode='train')
-elif args.dataset == 'maps':
-    dataset = Maps(root='.', transform=transforms, download=True, mode='train')
-elif args.dataset == 'trydata':
+if args.dataset == 'trydata':
     dataset = TryData(root='.', transform=transforms, download=True, mode='train')
-else:
-    dataset = Facades(root='.', transform=transforms, download=True, mode='train')
 
 dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
 print('Start of training process!')
@@ -91,9 +82,6 @@ for epoch in range(args.epochs):
     end = time.time()
     tm = (end - start)
 
-    # Log to wandb
-    wandb.log({"generator_loss": g_loss, "discriminator_loss": d_loss})
-
     logger.add_scalar('generator_loss', g_loss, epoch+1)
     logger.add_scalar('discriminator_loss', d_loss, epoch+1)
     logger.save_weights(generator.state_dict(), 'generator')
@@ -101,10 +89,5 @@ for epoch in range(args.epochs):
 
     print("[Epoch %d/%d] [G loss: %.3f] [D loss: %.3f] ETA: %.3fs" % (epoch+1, args.epochs, g_loss, d_loss, tm))
 
-    # Save model to WandB
-    wandb.save('generator.pth')
-    wandb.save('discriminator.pth')
-
 logger.close()
-wandb.finish()
 print('End of training process!')

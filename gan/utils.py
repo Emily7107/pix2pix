@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 import torch
 from torch import nn
+import wandb
 
 def initialize_weights(layer):
     if isinstance(layer, (nn.Conv2d, nn.ConvTranspose2d)):
@@ -29,18 +30,24 @@ class Logger():
         with open(fpath, 'w') as f:
             data = json.dumps(self.cache)
             f.write(data)
+            
+        wandb.init(project="pix2pix", name="training_run")
         
     def add_scalar(self, key: str, value: float, t: int):
-        if key in self.cache:
-            self.cache[key][t] = value
-        else:
-            self.cache[key] = {t:value}
-        self.update()
+        # if key in self.cache:
+        #     self.cache[key][t] = value
+        # else:
+        #     self.cache[key] = {t:value}
+        # self.update()
+        wandb.log({key: value}, step=t)
         return None
     
     def save_weights(self, state_dict, model_name: str='model'):
         fpath = f"{self.exp_name}/{model_name}.pt"
         torch.save(state_dict, fpath)
+        artifact=wandb.Artifact('pix2pix',type='model')
+        artifact.add_file(fpath)
+        wandb.log_artifact(artifact)
         return None
     
     def update(self,):
@@ -56,4 +63,5 @@ class Logger():
             data = json.dumps(self.cache)
             f.write(data)
         self.cache={}
+        wandb.finish()
         return None

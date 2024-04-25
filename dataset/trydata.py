@@ -8,7 +8,7 @@ class TryData(Dataset):
     def __init__(self,
                  root: str='.',
                  transform=None,
-                 download: bool=True,
+                 download: bool=False,
                  mode: str='train',
                  direction: str='B2A'):
         
