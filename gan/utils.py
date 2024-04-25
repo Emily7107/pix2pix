@@ -4,6 +4,8 @@ from datetime import datetime
 import torch
 from torch import nn
 import wandb
+from PIL import Image
+import numpy as np
 
 def initialize_weights(layer):
     if isinstance(layer, (nn.Conv2d, nn.ConvTranspose2d)):
@@ -34,11 +36,6 @@ class Logger():
         wandb.init(project="pix2pix", name="training_run")
         
     def add_scalar(self, key: str, value: float, t: int):
-        # if key in self.cache:
-        #     self.cache[key][t] = value
-        # else:
-        #     self.cache[key] = {t:value}
-        # self.update()
         wandb.log({key: value}, step=t)
         return None
     
