@@ -18,6 +18,7 @@ parser.add_argument("--epochs", type=int, default=200, help="Number of epochs")
 parser.add_argument("--dataset", type=str, default="facades", help="Name of the dataset: ['facades', 'maps', 'cityscapes','trydata']")
 parser.add_argument("--batch_size", type=int, default=1, help="Size of the batches")
 parser.add_argument("--lr", type=float, default=0.0002, help="Adams learning rate")
+parser.add_argument("--version",type=int,default=30,help="Enter the version of model")
 args = parser.parse_args()
 
 device = ('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -29,7 +30,8 @@ transforms = T.Compose([T.Resize((256,256)),
 
 print('Loading models!')
 run=wandb.init(project="pix2pix", name="testing_run")
-artifact = run.use_artifact('tyw7107/pix2pix/pix2pix:v28', type='model')
+path=f'tyw7107/pix2pix/pix2pix:v{args.version}'
+artifact = run.use_artifact(path, type='model')
 artifact_dir = artifact.download()
 generator = UnetGenerator().to(device)
 discriminator = ConditionalDiscriminator().to(device)
