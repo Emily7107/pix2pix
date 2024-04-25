@@ -36,7 +36,7 @@ d_optimizer = torch.optim.Adam(discriminator.parameters(), lr=args.lr, betas=(0.
 g_criterion = GeneratorLoss(alpha=100)
 d_criterion = DiscriminatorLoss()
 
-print(f'Downloading "{args.dataset.upper()}" dataset!')
+print(f'Loading "{args.dataset.upper()}" dataset!')
 if args.dataset == 'trydata':
     dataset = TryData(root='.', transform=transforms, download=True, mode='train')
 
@@ -84,10 +84,11 @@ for epoch in range(args.epochs):
 
     logger.add_scalar('generator_loss', g_loss, epoch+1)
     logger.add_scalar('discriminator_loss', d_loss, epoch+1)
-    logger.save_weights(generator.state_dict(), 'generator')
-    logger.save_weights(discriminator.state_dict(), 'discriminator')
 
     print("[Epoch %d/%d] [G loss: %.3f] [D loss: %.3f] ETA: %.3fs" % (epoch+1, args.epochs, g_loss, d_loss, tm))
 
+logger.save_weights(generator.state_dict(), 'generator')
+# logger.save_weights(discriminator.state_dict(), 'discriminator')
 logger.close()
+
 print('End of training process!')
