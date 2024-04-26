@@ -6,16 +6,18 @@ from progress.bar import IncrementalBar
 from PIL import Image
 import wandb
 import numpy as np
+import os
 
 from dataset import TryData
 from dataset import transforms as T
+from dataset.transforms import ToImage
 from gan.generator import UnetGenerator
 from gan.discriminator import ConditionalDiscriminator
 from gan.utils import Logger, initialize_weights
 
 parser = argparse.ArgumentParser(prog='top', description='Train Pix2Pix')
 parser.add_argument("--epochs", type=int, default=200, help="Number of epochs")
-parser.add_argument("--dataset", type=str, default="facades", help="Name of the dataset: ['facades', 'maps', 'cityscapes','trydata']")
+parser.add_argument("--dataset", type=str, default="trydata", help="Name of the dataset: ['facades', 'maps', 'cityscapes','trydata']")
 parser.add_argument("--batch_size", type=int, default=1, help="Size of the batches")
 parser.add_argument("--lr", type=float, default=0.0002, help="Adams learning rate")
 parser.add_argument("--version",type=int,default=30,help="Enter the version of model")
@@ -33,8 +35,9 @@ run=wandb.init(project="pix2pix", name="testing_run")
 path=f'tyw7107/pix2pix/pix2pix:v{args.version}'
 artifact = run.use_artifact(path, type='model')
 artifact_dir = artifact.download()
+model_path = os.path.join(artifact_dir, 'generator.pt')
 generator = UnetGenerator().to(device)
-discriminator = ConditionalDiscriminator().to(device)
+generator.load_state_dict(torch.load(model_path))
 
 print(f'Loading "{args.dataset.upper()}" dataset!')
 if args.dataset == 'trydata':
@@ -46,6 +49,8 @@ generatedImage=[]
 realImage=[]
 inputImage=[]
 
+toImage=ToImage()
+
 with torch.no_grad():
     
     for x, real in dataloader:
@@ -54,22 +59,15 @@ with torch.no_grad():
 
         fake = generator(x)
         
-        # move image to cpu
-        fake_cpu = fake.cpu()
-        fake_np = fake_cpu.squeeze(0).permute(1, 2, 0).numpy()
-        generatedImage.append(fake_np)
-        
-        x_cpu = x.cpu().squeeze(0).permute(1, 2, 0).numpy()
-        real_cpu = real.cpu().squeeze(0).permute(1, 2, 0).numpy()
-        inputImage.append(x_cpu)
-        realImage.append(real_cpu)
-        
-# change to numpy image 
-generated_images_pil = [Image.fromarray(np.uint8(image * 255)) for image in generatedImage]
-input_images_pil = [Image.fromarray(np.uint8(image * 255)) for image in inputImage]
-real_images_pil = [Image.fromarray(np.uint8(image * 255)) for image in realImage]       
+        fake_pil = toImage(fake.cpu())
+        real_pil = toImage(real.cpu())
+        input_pil = toImage(x.cpu())
 
+        generatedImage.append(fake_pil)
+        realImage.append(real_pil)
+        inputImage.append(input_pil)
+        
 # upload to wandb
-wandb.log({"Generated Image": [wandb.Image(image) for image in generated_images_pil]})
-wandb.log({"Input Image": [wandb.Image(image) for image in input_images_pil]})
-wandb.log({"Real Image": [wandb.Image(image) for image in real_images_pil]})
+wandb.log({"Generated Image": [wandb.Image(image) for image in generatedImage]})
+wandb.log({"Input Image": [wandb.Image(image) for image in inputImage]})
+wandb.log({"Real Image": [wandb.Image(image) for image in realImage]})

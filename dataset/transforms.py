@@ -141,7 +141,7 @@ class ToImage(Transformer):
         super().__init__()
     
     def __call__(self, imgA, imgB=None):
-        imgA = imgA.permute(1,2,0).numpy()
+        imgA = imgA.squeeze(0).permute(1,2,0).numpy()
         imgA = Image.fromarray(np.uint8(imgA*255))
         if imgB is None:
             return imgA
