@@ -10,7 +10,7 @@ class TryData(Dataset):
                  transform=None,
                  download: bool=False,
                  mode: str='train',
-                 direction: str='B2A'):
+                 direction: str='A2B'):
         
         self.root=root
         self.files=sorted(glob.glob(f"{root}/trydata/{mode}/*.png"))
