@@ -26,7 +26,7 @@ class TryData(Dataset):
     def __getitem__(self, idx):
         img = Image.open(self.files[idx])
         img = np.array(img)
-        img = img /256
+        # img = img /256
         img = Image.fromarray(img)
         img = img.convert('RGB')
         
