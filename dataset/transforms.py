@@ -127,11 +127,11 @@ class ToTensor(Transformer):
         super().__init__()
     
     def __call__(self, imgA, imgB=None):
-        imgA = np.array(imgA)/255.
+        imgA = np.array(imgA)/256.
         imgA = torch.from_numpy(imgA).float().permute(2, 0, 1)
         if imgB is None:
             return imgA
-        imgB = np.array(imgB)/255.
+        imgB = np.array(imgB)/256.
         imgB = torch.from_numpy(imgB).float().permute(2, 0, 1)
         return imgA, imgB
     
