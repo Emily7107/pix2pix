@@ -1,5 +1,6 @@
 import glob
 import torch
+import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
 from .utils import download_and_extract
@@ -23,7 +24,12 @@ class TryData(Dataset):
         return len(self.files)
     
     def __getitem__(self, idx):
-        img = Image.open(self.files[idx]).convert('RGB')
+        img = Image.open(self.files[idx])
+        img = np.array(img)
+        img = img /256
+        img = Image.fromarray(img)
+        img = img.convert('RGB')
+        
         W, H = img.size
         cW = W//2
         imgA = img.crop((0, 0, cW, H))

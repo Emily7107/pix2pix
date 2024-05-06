@@ -12,10 +12,9 @@ from dataset import TryData
 from dataset import transforms as T
 from dataset.transforms import ToImage
 from gan.generator import UnetGenerator
-from gan.discriminator import ConditionalDiscriminator
 from gan.utils import Logger, initialize_weights
 
-parser = argparse.ArgumentParser(prog='top', description='Train Pix2Pix')
+parser = argparse.ArgumentParser(prog='top', description='Test Pix2Pix')
 parser.add_argument("--epochs", type=int, default=200, help="Number of epochs")
 parser.add_argument("--dataset", type=str, default="trydata", help="Name of the dataset: ['facades', 'maps', 'cityscapes','trydata']")
 parser.add_argument("--batch_size", type=int, default=1, help="Size of the batches")
