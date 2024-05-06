@@ -142,11 +142,11 @@ class ToImage(Transformer):
     
     def __call__(self, imgA, imgB=None):
         imgA = imgA.squeeze(0).permute(1,2,0).numpy()
-        imgA = Image.fromarray(np.uint8(imgA*255))
+        imgA = Image.fromarray(np.uint8(imgA*256))
         if imgB is None:
             return imgA
         imgB = imgB.permute(1,2,0).numpy()
-        imgB = Image.fromarray(np.uint8(imgB*255))
+        imgB = Image.fromarray(np.uint8(imgB*256))
         return imgA, imgB
     
 class Normalize(Transformer):
