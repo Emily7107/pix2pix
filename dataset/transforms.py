@@ -127,11 +127,11 @@ class ToTensor(Transformer):
         super().__init__()
     
     def __call__(self, imgA, imgB=None):
-        imgA = np.array(imgA)/256.
+        imgA = np.array(imgA)/255.
         imgA = torch.from_numpy(imgA).float().permute(2, 0, 1)
         if imgB is None:
             return imgA
-        imgB = np.array(imgB)/256.
+        imgB = np.array(imgB)/255.
         imgB = torch.from_numpy(imgB).float().permute(2, 0, 1)
         return imgA, imgB
     
@@ -142,11 +142,11 @@ class ToImage(Transformer):
     
     def __call__(self, imgA, imgB=None):
         imgA = imgA.squeeze(0).permute(1,2,0).numpy()
-        imgA = Image.fromarray(np.uint8(imgA*256))
+        imgA = Image.fromarray(np.uint8(imgA*255))
         if imgB is None:
             return imgA
         imgB = imgB.permute(1,2,0).numpy()
-        imgB = Image.fromarray(np.uint8(imgB*256))
+        imgB = Image.fromarray(np.uint8(imgB*255))
         return imgA, imgB
     
 class Normalize(Transformer):

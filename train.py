@@ -6,6 +6,7 @@ import argparse
 from progress.bar import IncrementalBar
 
 from dataset import TryData
+from dataset import KITTIdata
 from dataset import transforms as T
 from gan.generator import UnetGenerator
 from gan.discriminator import ConditionalDiscriminator
@@ -14,7 +15,7 @@ from gan.utils import Logger, initialize_weights
 
 parser = argparse.ArgumentParser(prog='top', description='Train Pix2Pix')
 parser.add_argument("--epochs", type=int, default=200, help="Number of epochs")
-parser.add_argument("--dataset", type=str, default="facades", help="Name of the dataset: ['facades', 'maps', 'cityscapes','trydata']")
+parser.add_argument("--dataset", type=str, default="kittidata", help="Name of the dataset: ['facades', 'maps', 'cityscapes','trydata','kittidata']")
 parser.add_argument("--batch_size", type=int, default=1, help="Size of the batches")
 parser.add_argument("--lr", type=float, default=0.0002, help="Adams learning rate")
 args = parser.parse_args()
@@ -39,6 +40,8 @@ d_criterion = DiscriminatorLoss()
 print(f'Loading "{args.dataset.upper()}" dataset!')
 if args.dataset == 'trydata':
     dataset = TryData(root='.', transform=transforms, download=True, mode='train')
+else:
+    dataset = KITTIdata(root='.', transform=transforms, download=True, mode='train')
 
 dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
 print('Start of training process!')
@@ -52,7 +55,9 @@ for epoch in range(args.epochs):
 
     for x, real in dataloader:
         x = x.to(device)
+        print(x.shape)
         real = real.to(device)
+        print(real.shape)
 
         fake = generator(x)
         fake_pred = discriminator(fake, x)

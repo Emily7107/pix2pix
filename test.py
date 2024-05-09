@@ -1,18 +1,13 @@
 import torch
-from torch import nn
 from torch.utils.data import DataLoader
 import argparse
-from progress.bar import IncrementalBar
-from PIL import Image
 import wandb
-import numpy as np
 import os
 
 from dataset import TryData
 from dataset import transforms as T
 from dataset.transforms import ToImage
 from gan.generator import UnetGenerator
-from gan.utils import Logger, initialize_weights
 
 parser = argparse.ArgumentParser(prog='top', description='Test Pix2Pix')
 parser.add_argument("--epochs", type=int, default=200, help="Number of epochs")
