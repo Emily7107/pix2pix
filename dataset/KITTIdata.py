@@ -15,8 +15,8 @@ class KITTIdata(Dataset):
                  direction: str='A2B'):
         
         self.root=root
-        self.filesA=sorted(glob.glob(f"{root}/KITTIdata/intensity/{mode}/*.png"))
-        self.filesB=sorted(glob.glob(f"{root}/KITTIdata/origin/{mode}/*.png"))
+        self.filesA=sorted(glob.glob(f"{root}/KITTIdata/origin/{mode}/*.png"))
+        self.filesB=sorted(glob.glob(f"{root}/KITTIdata/intensity/{mode}/*.png"))
         self.transform=transform
         self.download=download
         self.mode=mode
