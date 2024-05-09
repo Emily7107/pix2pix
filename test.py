@@ -5,6 +5,7 @@ import wandb
 import os
 
 from dataset import TryData
+from dataset import KITTIdata
 from dataset import transforms as T
 from dataset.transforms import ToImage
 from gan.generator import UnetGenerator
@@ -25,8 +26,8 @@ transforms = T.Compose([T.Resize((256,256)),
                                      std=[0.5, 0.5, 0.5])])
 
 print('Loading models!')
-run=wandb.init(project="pix2pix", name="testing_run")
-path=f'tyw7107/pix2pix/pix2pix:v{args.version}'
+run=wandb.init(project="pix2pix_kitti", name="testing_run")
+path=f'tyw7107/pix2pix_kitti/pix2pix_kitti:v{args.version}'
 artifact = run.use_artifact(path, type='model')
 artifact_dir = artifact.download()
 model_path = os.path.join(artifact_dir, 'generator.pt')
@@ -35,7 +36,9 @@ generator.load_state_dict(torch.load(model_path))
 
 print(f'Loading "{args.dataset.upper()}" dataset!')
 if args.dataset == 'trydata':
-    dataset = TryData(root='.', transform=transforms, download=True, mode='val')
+    dataset = TryData(root='.', transform=transforms, download=True, mode='test')
+else:
+    dataset = KITTIdata(root='.', transform=transforms, download=True, mode='test')
 
 dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
 print('Start of evaluation process!')
