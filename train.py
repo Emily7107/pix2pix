@@ -55,9 +55,7 @@ for epoch in range(args.epochs):
 
     for x, real in dataloader:
         x = x.to(device)
-        print(x.shape)
         real = real.to(device)
-        print(real.shape)
 
         fake = generator(x)
         fake_pred = discriminator(fake, x)
