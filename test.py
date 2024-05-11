@@ -6,13 +6,14 @@ import os
 
 from dataset import TryData
 from dataset import KITTIdata
+from dataset import OxfordData
 from dataset import transforms as T
 from dataset.transforms import ToImage
 from gan.generator import UnetGenerator
 
 parser = argparse.ArgumentParser(prog='top', description='Test Pix2Pix')
 parser.add_argument("--epochs", type=int, default=200, help="Number of epochs")
-parser.add_argument("--dataset", type=str, default="trydata", help="Name of the dataset: ['facades', 'maps', 'cityscapes','trydata']")
+parser.add_argument("--dataset", type=str, default="trydata", help="Name of the dataset: ['facades', 'maps', 'cityscapes','trydata','oxforddata']")
 parser.add_argument("--batch_size", type=int, default=1, help="Size of the batches")
 parser.add_argument("--lr", type=float, default=0.0002, help="Adams learning rate")
 parser.add_argument("--version",type=int,default=30,help="Enter the version of model")
@@ -36,6 +37,8 @@ generator.load_state_dict(torch.load(model_path))
 
 print(f'Loading "{args.dataset.upper()}" dataset!')
 if args.dataset == 'trydata':
+    dataset = TryData(root='.', transform=transforms, download=True, mode='test')
+elif args.dataset == 'oxforddata':
     dataset = TryData(root='.', transform=transforms, download=True, mode='test')
 else:
     dataset = KITTIdata(root='.', transform=transforms, download=True, mode='test')
