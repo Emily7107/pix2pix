@@ -42,7 +42,7 @@ class Logger():
     def save_weights(self, state_dict, model_name: str='model'):
         fpath = f"{self.exp_name}/{model_name}.pt"
         torch.save(state_dict, fpath)
-        artifact=wandb.Artifact('pix2pix_kitti',type='model')
+        artifact=wandb.Artifact('pix2pix_oxford',type='model')
         artifact.add_file(fpath)
         wandb.log_artifact(artifact)
         return None

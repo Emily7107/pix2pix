@@ -27,8 +27,8 @@ transforms = T.Compose([T.CenterCrop((256,256)),
                                      std=[0.5, 0.5, 0.5])])
 
 print('Loading models!')
-run=wandb.init(project="pix2pix_kitti", name="testing_run")
-path=f'tyw7107/pix2pix_kitti/pix2pix_kitti:v{args.version}'
+run=wandb.init(project="pix2pix_oxford", name="testing_run")
+path=f'tyw7107/pix2pix_oxford/pix2pix_kitti:v{args.version}'
 artifact = run.use_artifact(path, type='model')
 artifact_dir = artifact.download()
 model_path = os.path.join(artifact_dir, 'generator.pt')
@@ -39,7 +39,7 @@ print(f'Loading "{args.dataset.upper()}" dataset!')
 if args.dataset == 'trydata':
     dataset = TryData(root='.', transform=transforms, download=True, mode='test')
 elif args.dataset == 'oxforddata':
-    dataset = TryData(root='.', transform=transforms, download=True, mode='test')
+    dataset = OxfordData(root='.', transform=transforms, download=True, mode='test')
 else:
     dataset = KITTIdata(root='.', transform=transforms, download=True, mode='test')
 
