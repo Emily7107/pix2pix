@@ -21,17 +21,17 @@ class Logger():
                  filename: str=None):
         self.exp_name=exp_name
         self.cache={}
-        # if not os.path.exists(exp_name):
-        #     os.makedirs(exp_name, exist_ok=True)
+        if not os.path.exists(exp_name):
+            os.makedirs(exp_name, exist_ok=True)
         self.date=datetime.today().strftime("%B_%d_%Y_%I_%M%p")
-        # if filename is None:
-        #     self.filename=self.date
-        # else:
-        #     self.filename="_".join([self.date, filename])
-        # fpath = f"{self.exp_name}/{self.filename}.json"
-        # with open(fpath, 'w') as f:
-        #     data = json.dumps(self.cache)
-        #     f.write(data)
+        if filename is None:
+            self.filename=self.date
+        else:
+            self.filename="_".join([self.date, filename])
+        fpath = f"{self.exp_name}/{self.filename}.json"
+        with open(fpath, 'w') as f:
+            data = json.dumps(self.cache)
+            f.write(data)
             
         wandb.init(project="pix2pix_oxford", name="training_run")
         
@@ -48,17 +48,17 @@ class Logger():
         return None
     
     def update(self,):
-        # fpath = f"{self.exp_name}/{self.filename}.json"
-        # with open(fpath, 'w') as f:
-        #     data = json.dumps(self.cache)
-        #     f.write(data)
+        fpath = f"{self.exp_name}/{self.filename}.json"
+        with open(fpath, 'w') as f:
+            data = json.dumps(self.cache)
+            f.write(data)
         return None
     
     def close(self,):
-        # fpath = f"{self.exp_name}/{self.filename}.json"
-        # with open(fpath, 'w') as f:
-        #     data = json.dumps(self.cache)
-        #     f.write(data)
-        # self.cache={}
+        fpath = f"{self.exp_name}/{self.filename}.json"
+        with open(fpath, 'w') as f:
+            data = json.dumps(self.cache)
+            f.write(data)
+        self.cache={}
         wandb.finish()
         return None
