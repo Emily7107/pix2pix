@@ -67,6 +67,11 @@ for epoch in range(args.epochs):
         fake = generator(x).detach()
         fake_pred = discriminator(fake, x)
         real_pred = discriminator(real, x)
+        
+        mask_indices = (real == 0).nonzero()
+        fake_pred[mask_indices[:, 0], mask_indices[:, 1]] = 0
+        real_pred[mask_indices[:, 0], mask_indices[:, 1]] = 0
+        
         d_loss = d_criterion(fake_pred, real_pred)
 
         g_optimizer.zero_grad()

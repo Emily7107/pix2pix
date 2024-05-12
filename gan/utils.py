@@ -33,7 +33,7 @@ class Logger():
             data = json.dumps(self.cache)
             f.write(data)
             
-        wandb.init(project="pix2pix_oxford", name="training_run")
+        wandb.init(project="pix2pix_kitti", name="training_run_masking")
         
     def add_scalar(self, key: str, value: float, t: int):
         wandb.log({key: value}, step=t)
@@ -42,7 +42,7 @@ class Logger():
     def save_weights(self, state_dict, model_name: str='model'):
         fpath = f"{self.exp_name}/{model_name}.pt"
         torch.save(state_dict, fpath)
-        artifact=wandb.Artifact('pix2pix_oxford',type='model')
+        artifact=wandb.Artifact('pix2pix_kitti',type='model')
         artifact.add_file(fpath)
         wandb.log_artifact(artifact)
         return None
