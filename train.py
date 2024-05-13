@@ -62,15 +62,18 @@ for epoch in range(args.epochs):
 
         fake = generator(x)
         fake_pred = discriminator(fake, x)
+        
+        real_copy = real
+        mask = torch.zeros_like(real_copy)
+        mask_index = torch.argwhere(real_copy)
+        mask[mask_index[:, 0], mask_index[:, 1]] = 1
+        fake_mask = torch.mul(fake,mask)
+        
         g_loss = g_criterion(fake, real, fake_pred)
 
         fake = generator(x).detach()
         fake_pred = discriminator(fake, x)
         real_pred = discriminator(real, x)
-        
-        mask_indices = (real == 0).nonzero()
-        fake_pred[mask_indices[:, 0], mask_indices[:, 1]] = 0
-        real_pred[mask_indices[:, 0], mask_indices[:, 1]] = 0
         
         d_loss = d_criterion(fake_pred, real_pred)
 
