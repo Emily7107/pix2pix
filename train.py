@@ -64,9 +64,9 @@ for epoch in range(args.epochs):
         fake_pred = discriminator(fake, x)
         
         real_copy = real
-        mask = torch.zeros_like(real_copy)
-        mask_index = torch.argwhere(real_copy)
-        mask[mask_index[:, 0], mask_index[:, 1]] = 1
+        mask0 = torch.zeros_like(real_copy)
+        mask1 = torch.ones_like(real_copy)
+        mask = torch.where(real_copy > 0, mask1,mask0)
         fake_mask = torch.mul(fake,mask)
         
         g_loss = g_criterion(fake, real, fake_pred)
